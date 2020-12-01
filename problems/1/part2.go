@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 )
 
 func main() {
@@ -16,8 +17,8 @@ func main() {
 	defer file.Close()
 
 	var currNumber int
-	prevNumbers := []int{}
-	sums := make(map[int][2]int)
+
+	numbers := []int{}
 	for {
 
 		_, err := fmt.Fscanf(file, "%d\n", &currNumber)
@@ -30,21 +31,32 @@ func main() {
 			os.Exit(1)
 		}
 
-		lookingFor := 2020 - currNumber
-		if otherNums, ok := sums[lookingFor]; ok {
-			fmt.Printf("Solution:  %d x %d x %d = %d\n",
-				currNumber,
-				otherNums[0],
-				otherNums[1],
-				currNumber*otherNums[0]*otherNums[1])
-			return
-		}
+		numbers = append(numbers, currNumber)
 
-		for _, n := range prevNumbers {
-			sums[n+currNumber] = [2]int{n, currNumber}
-		}
-		prevNumbers = append(prevNumbers, currNumber)
+	}
 
+	sort.Ints(numbers)
+
+	for i, n := range numbers {
+		targetSum := 2020 - n
+		j := i + 1
+		k := len(numbers) - 1
+		for j < k {
+			currSum := numbers[j] + numbers[k]
+			if currSum < targetSum {
+				j += 1
+			} else if currSum > targetSum {
+				k -= 1
+			} else {
+				fmt.Printf("Solution:  %d x %d x %d = %d\n",
+					n,
+					numbers[j],
+					numbers[k],
+					n*numbers[j]*numbers[k],
+				)
+				return
+			}
+		}
 	}
 
 	fmt.Println("No matching pair of numbers found that add to 2020")
