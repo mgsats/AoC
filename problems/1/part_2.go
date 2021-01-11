@@ -44,9 +44,9 @@ func main() {
 		for j < k {
 			currSum := numbers[j] + numbers[k]
 			if currSum < targetSum {
-				j += 1
+				j--
 			} else if currSum > targetSum {
-				k -= 1
+				k--
 			} else {
 				fmt.Printf("Solution:  %d x %d x %d = %d\n",
 					n,
