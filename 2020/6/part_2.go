@@ -22,13 +22,22 @@ func main() {
 	var countsTotal int
 	for scanner.Scan() {
 		line := scanner.Text()
-		count := make(map[rune]struct{})
-		for _, c := range line {
-			if _, ok := count[c]; !ok && unicode.IsLower(c) {
-				count[c] = struct{}{}
+		groups := strings.Fields(line)
+		var counts [26]int
+		for _, s := range groups {
+			charsInGroup := make(map[rune]struct{})
+			for _, c := range s {
+				if _, ok := charsInGroup[c]; !ok && unicode.IsLower(c) {
+					charsInGroup[c] = struct{}{}
+					counts[(c-97)%26]++
+				}
 			}
 		}
-		countsTotal += len(count)
+		for _, c := range counts {
+			if c == len(groups) {
+				countsTotal++
+			}
+		}
 	}
 
 	if err := scanner.Err(); err != nil {
